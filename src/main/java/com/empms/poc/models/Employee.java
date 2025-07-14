@@ -37,14 +37,13 @@ public class Employee {
 	private Double salary;
 	private String password;
 	private boolean enabled = true;
-	
+
 	public Employee(String username, String email, String password) {
 		super();
 		this.username = username;
 		this.email = email;
 		this.password = password;
 	}
-
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_id")

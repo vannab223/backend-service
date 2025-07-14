@@ -1,6 +1,7 @@
 
 package com.empms.poc.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ import com.empms.poc.dto.EmployeeMapper;
 import com.empms.poc.dto.EmployeeRequestDTO;
 import com.empms.poc.dto.EmployeeResponseDTO;
 import com.empms.poc.models.Employee;
-import com.empms.poc.security.services.EmployeeService;
+import com.empms.poc.security.serviceImpl.EmployeeServiceImpl;
 
 /**
  * 
@@ -33,25 +34,19 @@ import com.empms.poc.security.services.EmployeeService;
  * 
  */
 @RestController
-
-@RequestMapping("emp")
+@RequestMapping("api/emp")
 public class EmployeeController {
 
-	private final EmployeeService employeeService;
-
-	public EmployeeController(EmployeeService employeeService) {
-		this.employeeService = employeeService;
-	}
+	@Autowired
+	private EmployeeServiceImpl employeeService;
 
 	@GetMapping("/{id}")
-
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable Long id) {
 		return new ResponseEntity<EmployeeResponseDTO>(employeeService.getEmployeeById(id), HttpStatus.OK);
 	}
 
 	@GetMapping
-
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
 
@@ -70,17 +65,13 @@ public class EmployeeController {
 	}
 
 	@PutMapping("/{id}")
-
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public ResponseEntity<EmployeeResponseDTO> updateEmployee(@PathVariable Long id,
-
-			@RequestBody EmployeeRequestDTO employeeDetails) {
+	public ResponseEntity<EmployeeResponseDTO> updateEmployee(@PathVariable Long id,@RequestBody EmployeeRequestDTO employeeDetails) {
 		EmployeeResponseDTO updatedEmployee = employeeService.updateEmployee(id, employeeDetails);
 		return ResponseEntity.ok(updatedEmployee);
 	}
 
 	@DeleteMapping("/{id}")
-
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
 		boolean deleted = employeeService.deleteEmployee(id);
@@ -89,13 +80,6 @@ public class EmployeeController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
-	}
-
-	@GetMapping("/{empId}/department/{deptId}")
-
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public Employee assignDepartmentToEmployee(@PathVariable Long empId, @PathVariable Long deptId) {
-		return employeeService.assignDepartmentToEmployee(empId, deptId);
 	}
 
 }

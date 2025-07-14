@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.empms.poc.security.jwt.AuthEntryPointJwt;
 import com.empms.poc.security.jwt.AuthTokenFilter;
-import com.empms.poc.security.services.UserDetailsServiceImpl;
+import com.empms.poc.security.serviceImpl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
@@ -52,25 +52,6 @@ public class WebSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-	/*
-	 * @Bean public SecurityFilterChain filterChain(HttpSecurity http) throws
-	 * Exception { http.csrf(csrf -> csrf.disable()) .exceptionHandling(exception ->
-	 * exception.authenticationEntryPoint(unauthorizedHandler))
-	 * .sessionManagement(session ->
-	 * session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	 * .authorizeHttpRequests( auth -> auth.requestMatchers("/api/auth/**",
-	 * "/swagger-ui/index.html", "/swagger-ui.html", "/swagger", "/swagger-ui",
-	 * "favicon.ico", "/favicon.ico", "/swagger-ui/*", "swagger-ui/index.html",
-	 * "/swagger-ui/index.html/").permitAll().anyRequest().authenticated());
-	 * 
-	 * http.authenticationProvider(authenticationProvider());
-	 * 
-	 * http.addFilterBefore(authenticationJwtTokenFilter(),
-	 * UsernamePasswordAuthenticationFilter.class);
-	 * 
-	 * return http.build(); }
-	 */
-	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http

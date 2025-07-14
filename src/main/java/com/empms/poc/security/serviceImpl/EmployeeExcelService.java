@@ -1,4 +1,4 @@
-package com.empms.poc.security.services;
+package com.empms.poc.security.serviceImpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,10 +8,9 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
-import org.apache.poi.ss.usermodel.Workbook;
-
 
 import com.empms.poc.models.Employee;
 
@@ -24,14 +23,12 @@ public class EmployeeExcelService {
 		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			Sheet sheet = workbook.createSheet("Employees");
 
-			// Header row
 			Row headerRow = sheet.createRow(0);
 			for (int col = 0; col < columns.length; col++) {
 				Cell cell = headerRow.createCell(col);
 				cell.setCellValue(columns[col]);
 			}
 
-			// Data rows
 			int rowIdx = 1;
 			for (Employee emp : employees) {
 				Row row = sheet.createRow(rowIdx++);
@@ -42,11 +39,9 @@ public class EmployeeExcelService {
 				row.createCell(3).setCellValue(emp.getYearsOfExperience());
 				row.createCell(4).setCellValue(emp.getSalary());
 
-				// Department name or empty if null
 				String deptName = emp.getDepartment() != null ? emp.getDepartment().getName() : "";
 				row.createCell(5).setCellValue(deptName);
 
-				// Roles concatenated string
 				String roles = emp.getRoles() == null ? ""
 						: emp.getRoles().stream().map(role -> role.getName().name()) // or role.getName() if String
 								.reduce((r1, r2) -> r1 + ", " + r2).orElse("");

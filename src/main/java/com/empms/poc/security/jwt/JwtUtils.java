@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.empms.poc.security.services.UserDetailsImpl;
+import com.empms.poc.security.serviceImpl.UserDetailsImpl;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
