@@ -2,10 +2,7 @@ package com.empms.poc.payload.request;
 
 import java.util.Set;
 
-import com.empms.poc.models.Address;
-import com.empms.poc.models.Department;
-import com.empms.poc.models.Employee;
-import com.empms.poc.models.UserRole;
+import com.empms.poc.dto.AddressDTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -34,7 +31,7 @@ public class SignupRequest {
 	@Size(min = 6, max = 40)
 	private String password;
 
-	private Address address;
+	private AddressDTO address;
 	private Set<String> role;
 
 	private Long departmentId;
