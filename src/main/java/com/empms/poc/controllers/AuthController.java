@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.empms.poc.dto.AddressDTO;
+import com.empms.poc.models.Address;
 import com.empms.poc.models.Department;
 import com.empms.poc.models.ERole;
 import com.empms.poc.models.Employee;
@@ -88,8 +90,17 @@ public class AuthController {
 				encoder.encode(signUpRequest.getPassword()));
 		user.setSalary(signUpRequest.getSalary());
 		user.setYearsOfExperience(signUpRequest.getYearsOfExperience());
+		
+		AddressDTO addressDTO = signUpRequest.getAddress();
+		Address address = new Address();
+		address.setStreet(addressDTO.getStreet());
+		address.setCity(addressDTO.getCity());
+		address.setState(addressDTO.getState());
+		address.setCountry(addressDTO.getCountry());
+		address.setZipCode(addressDTO.getZipCode());
 
-		user.setAddress(signUpRequest.getAddress());
+		user.setAddress(address);
+		
 		Department department = departmentRepository.findById(signUpRequest.getDepartmentId())
 				.orElseThrow(() -> new RuntimeException("Department not found"));
 		user.setDepartment(department);

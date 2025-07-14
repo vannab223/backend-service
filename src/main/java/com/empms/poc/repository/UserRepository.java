@@ -16,12 +16,14 @@ import com.empms.poc.models.Employee;
 @Repository
 public interface UserRepository extends JpaRepository<Employee, Long> {
 	
-	Optional<Employee> findByUsername(String username);
+	@Query("SELECT e FROM Employee e WHERE e.username = :username")
+    Optional<Employee> findByUsername(@Param("username") String username);
 
-	Boolean existsByUsername(String username);
+    @Query("SELECT COUNT(e) > 0 FROM Employee e WHERE e.username = :username")
+    Boolean existsByUsername(@Param("username") String username);
 
-	Boolean existsByEmail(String email);
-	
+    @Query("SELECT COUNT(e) > 0 FROM Employee e WHERE e.email = :email")
+    Boolean existsByEmail(@Param("email") String email);
 	
 	@Query("SELECT e FROM Employee e")
 	Page<Employee> findAllEmployees(Pageable pageable);
