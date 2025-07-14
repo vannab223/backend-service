@@ -17,57 +17,59 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.empms.poc.models.Employee;
-import com.empms.poc.security.services.EmployeeExcelService;
-import com.empms.poc.security.services.EmployeeService;
+import com.empms.poc.security.serviceImpl.EmployeeExcelService;
+import com.empms.poc.security.serviceImpl.EmployeeServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/employees/export")
 public class EmployeeExportController {
-	
-	 @Autowired
-	    private EmployeeService employeeService;
 
-	    @Autowired
-	    private EmployeeExcelService excelService;
+	@Autowired
+	private EmployeeServiceImpl employeeService;
 
-	    @Operation(summary = "Export all employees data to Excel")
-	    @GetMapping("/department/{deptId}")
-	    public ResponseEntity<Resource> exportByDepartment(@PathVariable Long deptId) throws IOException {
-	        List<Employee> employees = employeeService.getEmployeesByDepartment(deptId);
-	        return buildExcelResponse(employees, "employees_by_department.xlsx");
-	    }
+	@Autowired
+	private EmployeeExcelService excelService;
 
-	    @Operation(summary = "Export all employees data to Excel")
-	    @GetMapping("/roles")
-	    public ResponseEntity<Resource> exportByRoles(@RequestParam List<String> roleNames) throws IOException {
-	        List<Employee> employees = employeeService.getEmployeesByRoles(roleNames);
-	        return buildExcelResponse(employees, "employees_by_roles.xlsx");
-	    }
+	@Operation(summary = "Export all employees data to Excel")
+	@GetMapping("/department/{deptId}")
+	public ResponseEntity<Resource> exportByDepartment(@PathVariable Long deptId) throws IOException {
+		List<Employee> employees = employeeService.getEmployeesByDepartment(deptId);
+		return buildExcelResponse(employees, "employees_by_department.xlsx");
+	}
 
-	    @Operation(summary = "Export all employees data to Excel")
-	    @GetMapping("/experience")
-	    public ResponseEntity<Resource> exportByExperience(@RequestParam int minYears, @RequestParam int maxYears) throws IOException {
-	        List<Employee> employees = employeeService.getEmployeesByYearsOfExperience(minYears, maxYears);
-	        return buildExcelResponse(employees, "employees_by_experience.xlsx");
-	    }
+	@Operation(summary = "Export all employees data to Excel")
+	@GetMapping("/roles")
+	public ResponseEntity<Resource> exportByRoles(@RequestParam List<String> roleNames) throws IOException {
+		List<Employee> employees = employeeService.getEmployeesByRoles(roleNames);
+		return buildExcelResponse(employees, "employees_by_roles.xlsx");
+	}
 
-	    @Operation(summary = "Export all employees data to Excel")
-	    @GetMapping("/salary")
-	    public ResponseEntity<Resource> exportBySalary(@RequestParam double minSalary, @RequestParam double maxSalary) throws IOException {
-	        List<Employee> employees = employeeService.getEmployeesBySalary(minSalary, maxSalary);
-	        return buildExcelResponse(employees, "employees_by_salary.xlsx");
-	    }
+	@Operation(summary = "Export all employees data to Excel")
+	@GetMapping("/experience")
+	public ResponseEntity<Resource> exportByExperience(@RequestParam int minYears, @RequestParam int maxYears)
+			throws IOException {
+		List<Employee> employees = employeeService.getEmployeesByYearsOfExperience(minYears, maxYears);
+		return buildExcelResponse(employees, "employees_by_experience.xlsx");
+	}
 
-	    private ResponseEntity<Resource> buildExcelResponse(List<Employee> employees, String filename) throws IOException {
-	        ByteArrayInputStream stream = excelService.employeesToExcel(employees);
-	        InputStreamResource resource = new InputStreamResource(stream);
+	@Operation(summary = "Export all employees data to Excel")
+	@GetMapping("/salary")
+	public ResponseEntity<Resource> exportBySalary(@RequestParam double minSalary, @RequestParam double maxSalary)
+			throws IOException {
+		List<Employee> employees = employeeService.getEmployeesBySalary(minSalary, maxSalary);
+		return buildExcelResponse(employees, "employees_by_salary.xlsx");
+	}
 
-	        return ResponseEntity.ok()
-	                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-	                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-	                .body(resource);
-	    }
+	private ResponseEntity<Resource> buildExcelResponse(List<Employee> employees, String filename) throws IOException {
+		ByteArrayInputStream stream = excelService.employeesToExcel(employees);
+		InputStreamResource resource = new InputStreamResource(stream);
+
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+				.contentType(
+						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+				.body(resource);
+	}
 
 }

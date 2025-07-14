@@ -1,9 +1,10 @@
-package com.empms.poc.security.services;
+package com.empms.poc.security.serviceImpl;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -18,22 +19,20 @@ import com.empms.poc.dto.EmployeeResponseDTO;
 import com.empms.poc.exception.ResourceNotFoundException;
 import com.empms.poc.models.Address;
 import com.empms.poc.models.Department;
-import com.empms.poc.models.ERole;
 import com.empms.poc.models.Employee;
 import com.empms.poc.repository.DepartmentRepository;
 import com.empms.poc.repository.UserRepository;
+import com.empms.poc.security.service.EmployeeService;
 
 @Service
 @Transactional
-public class EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService {
 
-	private final UserRepository employeeRepository;
-	private final DepartmentRepository departmentRepository;
+	@Autowired
+	private UserRepository employeeRepository;
 
-	public EmployeeService(UserRepository employeeRepository, DepartmentRepository departmentRepository) {
-		this.employeeRepository = employeeRepository;
-		this.departmentRepository = departmentRepository;
-	}
+	@Autowired
+	private DepartmentRepository departmentRepository;
 
 	@Cacheable(value = "employees")
 	public Page<Employee> getAllEmployees(Pageable pageable) {
@@ -156,4 +155,5 @@ public class EmployeeService {
 
 		return dto;
 	}
+
 }

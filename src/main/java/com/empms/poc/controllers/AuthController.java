@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.empms.poc.models.Department;
 import com.empms.poc.models.ERole;
 import com.empms.poc.models.Employee;
 import com.empms.poc.models.UserRole;
@@ -25,10 +26,11 @@ import com.empms.poc.payload.request.LoginRequest;
 import com.empms.poc.payload.request.SignupRequest;
 import com.empms.poc.payload.response.JwtResponse;
 import com.empms.poc.payload.response.MessageResponse;
+import com.empms.poc.repository.DepartmentRepository;
 import com.empms.poc.repository.UserRepository;
 import com.empms.poc.repository.UserRoleRepository;
 import com.empms.poc.security.jwt.JwtUtils;
-import com.empms.poc.security.services.UserDetailsImpl;
+import com.empms.poc.security.serviceImpl.UserDetailsImpl;
 
 import jakarta.validation.Valid;
 
@@ -36,6 +38,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
 	@Autowired
 	AuthenticationManager authenticationManager;
 
@@ -44,6 +47,9 @@ public class AuthController {
 
 	@Autowired
 	UserRoleRepository roleRepository;
+
+	@Autowired
+	private DepartmentRepository departmentRepository;
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -78,14 +84,15 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 		}
 
-		// Create new user's account
 		Employee user = new Employee(signUpRequest.getUsername(), signUpRequest.getEmail(),
 				encoder.encode(signUpRequest.getPassword()));
 		user.setSalary(signUpRequest.getSalary());
 		user.setYearsOfExperience(signUpRequest.getYearsOfExperience());
-		
+
 		user.setAddress(signUpRequest.getAddress());
-		//user.setDepartment(signUpRequest.getDepartment());
+		Department department = departmentRepository.findById(signUpRequest.getDepartmentId())
+				.orElseThrow(() -> new RuntimeException("Department not found"));
+		user.setDepartment(department);
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<UserRole> roles = new HashSet<>();

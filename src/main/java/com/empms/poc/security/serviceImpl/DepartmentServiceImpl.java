@@ -1,4 +1,4 @@
-package com.empms.poc.security.services;
+package com.empms.poc.security.serviceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,20 +10,22 @@ import org.springframework.stereotype.Service;
 
 import com.empms.poc.dto.DepartmentDTO;
 import com.empms.poc.dto.DepartmentResponseDTO;
+import com.empms.poc.exception.ResourceNotFoundException;
 import com.empms.poc.models.Department;
 import com.empms.poc.repository.DepartmentRepository;
-import com.empms.poc.repository.UserRepository;
+import com.empms.poc.security.service.DepartmentService;
 
 @Service
-public class DepartmentService {
+public class DepartmentServiceImpl implements DepartmentService {
 
 	@Autowired
 	private DepartmentRepository departmentRepository;
 
-	@Autowired
-	private UserRepository employeeRepository;
-
 	public Department createDepartment(DepartmentDTO departmentDTO) {
+		if (departmentDTO == null || departmentDTO.getName() == null) {
+			throw new IllegalArgumentException("Department name must not be null.");
+		}
+
 		Department department = convertToEntity(departmentDTO);
 		return departmentRepository.save(department);
 	}
@@ -35,11 +37,16 @@ public class DepartmentService {
 
 	@Cacheable(value = "department", key = "#id")
 	public Optional<Department> getDepartmentById(Long id) {
-		return departmentRepository.findDepartmentById(id);
+		return departmentRepository.findDepartmentById(id).or(() -> {
+			throw new ResourceNotFoundException("Department with ID " + id + " not found");
+		});
 	}
 
 	@CacheEvict(value = { "departments", "department" }, allEntries = true)
 	public Department updateDepartment(Long id, DepartmentDTO departmentDTO) {
+		departmentRepository.findDepartmentById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Cannot update. Department ID " + id + " not found."));
+
 		Department updated = convertToEntity(departmentDTO);
 		updated.setId(id);
 		return departmentRepository.save(updated);
@@ -47,9 +54,10 @@ public class DepartmentService {
 
 	@CacheEvict(value = { "departments", "department" }, allEntries = true)
 	public void deleteDepartment(Long id) {
-		departmentRepository.findDepartmentById(id).ifPresent(department -> {
-			departmentRepository.deleteById(id);
-		});
+		Department dept = departmentRepository.findDepartmentById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Cannot delete. Department ID " + id + " not found."));
+
+		departmentRepository.deleteById(id);
 	}
 
 	public Department convertToEntity(DepartmentDTO dto) {

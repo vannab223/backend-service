@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.empms.poc.dto.DepartmentDTO;
 import com.empms.poc.dto.DepartmentResponseDTO;
 import com.empms.poc.models.Department;
-import com.empms.poc.security.services.DepartmentService;
+import com.empms.poc.security.serviceImpl.DepartmentServiceImpl;
 
 /**
  * 
@@ -34,7 +34,7 @@ import com.empms.poc.security.services.DepartmentService;
 public class DepartmentController {
 
 	@Autowired
-	private DepartmentService departmentService;
+	private DepartmentServiceImpl departmentService;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<DepartmentResponseDTO> getDepartment(@PathVariable Long id) {
